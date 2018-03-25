@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -91,15 +92,15 @@ func Run() (err error) {
 
 	ui.register("info", "Return information from player about current stream",
 		func(args []string) (isExit bool, err error) {
-			vlc.CommandToVLC("info\n")
+			err = vlc.CommandToVLC("info\n")
 			return
 		})
 
 	ui.register("list", "List of allowable radio stations",
 		func(args []string) (isExit bool, err error) {
-			fmt.Printf("|%20s|%20s|%20s|", "ID", "Name", "Genre")
+			fmt.Printf("|%20s|%20s|%20s|\n", "ID", "Name", "Genre")
 			for _, station := range stations {
-				fmt.Println("|%20s|%20s|%20s|",
+				fmt.Println("|%20s|%20s|%20s|\n",
 					station.ID, station.Name, station.Genre)
 			}
 			return
@@ -107,7 +108,7 @@ func Run() (err error) {
 
 	ui.register("title", "Title of the current stream",
 		func(args []string) (isExit bool, err error) {
-			vlc.CommandToVLC("get_title\n")
+			err = vlc.CommandToVLC("get_title\n")
 			return
 		})
 
@@ -118,14 +119,14 @@ func Run() (err error) {
 
 	ui.register("play", "Play [station], is [station] is empty, then playing random station",
 		func(args []string) (isExit bool, err error) {
-			var stationID int
+			var stationID string
 			if len(args) == 0 {
-				stationID = stations[rand.Intn(len(stations))].ID
+				stationID = strconv.Itoa(stations[rand.Intn(len(stations))].ID)
 			} else {
 				stationID = args[0]
 			}
-			url := "http://yp.shoutcast.com/sbin/tunein-station.pls?id=" + id
-			p.SendCommandToVLC(fmt.Sprintf("add %s\n", url))
+			url := "http://yp.shoutcast.com/sbin/tunein-station.pls?id=" + stationID
+			err = vlc.CommandToVLC(fmt.Sprintf("add %s\n", url))
 			fmt.Println("run station : ", stationID)
 			return
 		})
@@ -146,19 +147,19 @@ func Run() (err error) {
 
 	ui.register("stop", "Stop stream in player",
 		func(args []string) (isExit bool, err error) {
-			vlc.CommandToVLC("stop\n")
+			err = vlc.CommandToVLC("stop\n")
 			return
 		})
 
 	ui.register("resume", "Continue playing stopped stream",
 		func(args []string) (isExit bool, err error) {
-			vlc.CommandToVLC("stop\n")
+			err = vlc.CommandToVLC("stop\n")
 			return
 		})
 
 	ui.register("clear", "Clear playlist in player",
 		func(args []string) (isExit bool, err error) {
-			vlc.CommandToVLC("clear\n")
+			err = vlc.CommandToVLC("clear\n")
 			return
 		})
 
