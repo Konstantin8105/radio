@@ -3,9 +3,11 @@ package radio
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"sort"
 	"strings"
+	"time"
 )
 
 type ui struct {
@@ -75,6 +77,15 @@ func Run() (err error) {
 		}
 	}()
 
+	// search stations
+	stations, err := GetStations()
+	if err != nil {
+		return
+	}
+
+	// add seef for random number
+	rand.Seed(time.Now().UTC().UnixNano())
+
 	// run user interface
 	ui := &terminalUI{}
 
@@ -86,10 +97,6 @@ func Run() (err error) {
 
 	ui.register("list", "List of allowable radio stations",
 		func(args []string) (isExit bool, err error) {
-			stations, err := GetStations()
-			if err != nil {
-				return
-			}
 			fmt.Printf("|%20s|%20s|%20s|", "ID", "Name", "Genre")
 			for _, station := range stations {
 				fmt.Println("|%20s|%20s|%20s|",
@@ -113,7 +120,7 @@ func Run() (err error) {
 		func(args []string) (isExit bool, err error) {
 			var stationID int
 			if len(args) == 0 {
-				stationID = getRandomStation()
+				stationID = stations[rand.Intn(len(stations))].ID
 			} else {
 				stationID = args[0]
 			}

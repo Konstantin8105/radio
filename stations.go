@@ -29,10 +29,10 @@ type station struct {
 	Genre string
 }
 
-// TopStations - top of stations
+// GetStations return stations
 // List of top stations:
 // Post : http://shoutcast.com/Home/Top
-func TopStations() {
+func GetStations() (stations []station, err error) {
 	/*
 		var buf bytes.Buffer
 		res, err := http.Post("http://shoutcast.com/Home/Top", "", &buf)
@@ -47,7 +47,6 @@ func TopStations() {
 		fmt.Printf("%s", robots)
 	*/
 
-	var err error
 	robots := []byte(`[
 	      {
 	          "ID": 65504,
@@ -81,12 +80,13 @@ func TopStations() {
 	      }
 	      ]`)
 
-	var stations []station
 	err = json.Unmarshal(robots, &stations)
 	if err != nil {
-		fmt.Println("error:", err)
+		return
 	}
 	fmt.Printf("%+v\n", stations)
+
+	return
 }
 
 // List of stations by genrename:
