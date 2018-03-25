@@ -1,5 +1,6 @@
 # Xi-radio
 
+.markdown-preview.markdown-preview { p {font-size: 32;} }
 
 <p><font size="32">Ξ</font></p>
 
