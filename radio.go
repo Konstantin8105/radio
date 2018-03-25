@@ -86,8 +86,21 @@ func Run() (err error) {
 
 	ui.register("list", "List of allowable radio stations",
 		func(args []string) (isExit bool, err error) {
+			stations, err := GetStations()
+			if err != nil {
+				return
+			}
+			fmt.Printf("|%20s|%20s|%20s|", "ID", "Name", "Genre")
+			for _, station := range stations {
+				fmt.Println("|%20s|%20s|%20s|",
+					station.ID, station.Name, station.Genre)
+			}
+			return
+		})
 
-			TopStations()
+	ui.register("title", "Title of the current stream",
+		func(args []string) (isExit bool, err error) {
+			vlc.CommandToVLC("get_title\n")
 			return
 		})
 
@@ -98,6 +111,15 @@ func Run() (err error) {
 
 	ui.register("play", "Play [station], is [station] is empty, then playing random station",
 		func(args []string) (isExit bool, err error) {
+			var stationID int
+			if len(args) == 0 {
+				stationID = getRandomStation()
+			} else {
+				stationID = args[0]
+			}
+			url := "http://yp.shoutcast.com/sbin/tunein-station.pls?id=" + id
+			p.SendCommandToVLC(fmt.Sprintf("add %s\n", url))
+			fmt.Println("run station : ", stationID)
 			return
 		})
 
@@ -135,6 +157,8 @@ func Run() (err error) {
 
 	// print help information
 	ui.run("help")
+
+	// TODO: run last used station
 
 	for {
 		fmt.Printf("Ξ> ")
