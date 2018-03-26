@@ -14,7 +14,6 @@ import (
 
 // VLC media player server
 type VLC struct {
-	address    int
 	connection net.Conn
 }
 
@@ -29,7 +28,6 @@ func NewVLC() (v *VLC, err error) {
 	if err != nil {
 		return
 	}
-	v.address = freePort
 
 	// start vlc us server
 	_, err = exec.LookPath("cvlc")
@@ -37,7 +35,7 @@ func NewVLC() (v *VLC, err error) {
 		err = fmt.Errorf("Please install VLC. %v", err)
 		return
 	}
-	addr := "localhost:" + strconv.Itoa(v.address)
+	addr := "localhost:" + strconv.Itoa(freePort)
 	go func() {
 		_, err = exec.Command("cvlc", "--intf", "rc", "--rc-host",
 			addr).Output()

@@ -11,48 +11,51 @@ import (
 	"time"
 )
 
-type ui struct {
+type cliCommand struct {
 	command     string
 	description string
-	f           func(args []string) (isExit bool, err error)
+	action      func(args []string) (isExit bool, err error)
 }
 
-type terminalUI struct {
-	commands []ui
+type cli struct {
+	commands []cliCommand
 }
 
-func (u *terminalUI) register(
+func (c *cli) register(
 	command string,
-	comDescription string,
-	comFunction func(args []string) (isExit bool, err error)) {
+	description string,
+	action func(args []string) (isExit bool, err error)) {
 
 	if command == "" {
 		panic("Command cannot be empty")
 	}
-	if comDescription == "" {
+	if description == "" {
 		panic("Description cannot be empty")
 	}
-	for i := range u.commands {
-		if command == u.commands[i].command {
+	for i := range c.commands {
+		if command == c.commands[i].command {
 			panic(fmt.Errorf("Dublicate of command : %v", command))
 		}
 	}
-	u.commands = append(u.commands, ui{
+	c.commands = append(c.commands, cliCommand{
 		command:     command,
-		description: comDescription,
-		f:           comFunction,
+		description: description,
+		action:      action,
 	})
 }
 
-func (ui *terminalUI) run(com string, args ...string) (isExit bool, err error) {
+func (c *cli) run(com string, args ...string) (isExit bool, err error) {
+	// empty command
 	if com == "" {
 		return
 	}
-	for _, c := range ui.commands {
-		if strings.ToLower(com) == strings.ToLower(c.command) {
-			return c.f(args)
+	// is command exists
+	for _, command := range c.commands {
+		if strings.ToLower(com) == strings.ToLower(command.command) {
+			return command.action(args)
 		}
 	}
+	// command is not found
 	err = fmt.Errorf("Don`t found command: `%v`", com)
 	return
 }
@@ -79,7 +82,7 @@ func Run() (err error) {
 	}()
 
 	// search stations
-	stations, err := GetStations()
+	stations, err := getStations()
 	if err != nil {
 		return
 	}
@@ -88,7 +91,7 @@ func Run() (err error) {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	// run user interface
-	ui := &terminalUI{}
+	ui := &cli{}
 
 	ui.register("info", "Return information from player about current stream",
 		func(args []string) (isExit bool, err error) {
@@ -100,8 +103,8 @@ func Run() (err error) {
 		func(args []string) (isExit bool, err error) {
 			fmt.Printf("|%20s|%20s|%20s|\n", "ID", "Name", "Genre")
 			for _, station := range stations {
-				fmt.Println("|%20s|%20s|%20s|\n",
-					station.ID, station.Name, station.Genre)
+				fmt.Printf("|%20s|%20s|%20s|\n",
+					strconv.Itoa(station.ID), station.Name, station.Genre)
 			}
 			return
 		})
@@ -164,7 +167,7 @@ func Run() (err error) {
 		})
 
 	// print help information
-	ui.run("help")
+	_, _ = ui.run("help")
 
 	// TODO: run last used station
 
