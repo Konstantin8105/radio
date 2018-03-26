@@ -60,6 +60,13 @@ func (c *cli) run(com string, args ...string) (isExit bool, err error) {
 	return
 }
 
+func showWithMaxLength(str string, length int) string {
+	if len(str) < length {
+		return str
+	}
+	return str[:length]
+}
+
 // Run radio
 func Run() (err error) {
 	// show header of Xi-radio
@@ -99,12 +106,45 @@ func Run() (err error) {
 			return
 		})
 
-	ui.register("list", "List of allowable radio stations",
+	ui.register("search", "Search [query] a specific name",
+		func(args []string) (isExit bool, err error) {
+			if len(args) != 1 {
+				err = fmt.Errorf("Not allowable command. Example: `search pop`")
+				return
+			}
+			fmt.Println("Search by query : ", args[0])
+			fmt.Printf("|%20s|%20s|%20s|\n", "ID", "Name", "Genre")
+			for _, station := range stations {
+				var add bool
+				if strings.Contains(
+					strings.ToLower(station.Name),
+					strings.ToLower(args[0])) {
+					add = true
+				}
+				if strings.Contains(
+					strings.ToLower(station.Genre),
+					strings.ToLower(args[0])) {
+					add = true
+				}
+				if !add {
+					continue
+				}
+				fmt.Printf("|%20s|%20s|%20s|\n",
+					strconv.Itoa(station.ID),
+					showWithMaxLength(station.Name, 20),
+					showWithMaxLength(station.Genre, 20))
+			}
+			return
+		})
+
+	ui.register("list", "List of all allowable radio stations",
 		func(args []string) (isExit bool, err error) {
 			fmt.Printf("|%20s|%20s|%20s|\n", "ID", "Name", "Genre")
 			for _, station := range stations {
 				fmt.Printf("|%20s|%20s|%20s|\n",
-					strconv.Itoa(station.ID), station.Name, station.Genre)
+					strconv.Itoa(station.ID),
+					showWithMaxLength(station.Name, 20),
+					showWithMaxLength(station.Genre, 20))
 			}
 			return
 		})

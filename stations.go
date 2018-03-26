@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// Example of JSON output
+// Example of station JSON output
 /*
    {
        "ID": 65504,
@@ -32,22 +32,37 @@ type station struct {
 	Genre string
 }
 
+const (
+	stationListFilename = ".station.list.json"
+)
+
 // getStations return stations
 // List of top stations:
 // Post : http://shoutcast.com/Home/Top
 func getStations() (stations []station, err error) {
-	var buf bytes.Buffer
-	res, err := http.Post("http://shoutcast.com/Home/Top", "", &buf)
+	var jsonList []byte
+
+	jsonList, err = ioutil.ReadFile(stationListFilename)
 	if err != nil {
-		err = fmt.Errorf("Cannot create post request. %v", err)
-		return
+		// ignore error
+		err = nil
+		// download list from internet
+		var buf bytes.Buffer
+		var res *http.Response
+		res, err = http.Post("http://shoutcast.com/Home/Top", "", &buf)
+		if err != nil {
+			err = fmt.Errorf("Cannot create post request. %v", err)
+			return
+		}
+		jsonList, err = ioutil.ReadAll(res.Body)
+		if err != nil {
+			err = fmt.Errorf("Cannot read json. %v", err)
+			return
+		}
+		defer res.Body.Close()
+
+		_ = ioutil.WriteFile(stationListFilename, jsonList, 0644)
 	}
-	jsonList, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		err = fmt.Errorf("Cannot read json. %v", err)
-		return
-	}
-	defer res.Body.Close()
 
 	err = json.Unmarshal(jsonList, &stations)
 	if err != nil {
