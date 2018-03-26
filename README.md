@@ -8,11 +8,23 @@ Xi-radio is terminal radio
 
 Xi is greek letter(see https://en.wikipedia.org/wiki/Xi_(letter))
 
-Example:
+## Example
 
 ![terminal](https://github.com/Konstantin8105/Xi-radio/blob/master/pic/radio.png)
 
-Commands of terminal radio:
+## Run console radio
+
+1. Commands to get source:
+```
+go get -u github.com/Konstantin8105/Xi-radio
+```
+2. Run:
+```
+go run ./cmd/main.go
+```
+
+## Commands of terminal radio
+
 ```
 Start : Ξ (Xi-radio)
 Enter 'help' for show all commands
