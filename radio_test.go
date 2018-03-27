@@ -29,16 +29,20 @@ func TestPositive(t *testing.T) {
 
 	r, w, _ := os.Pipe()
 
+	var isDone bool
+
 	go func() {
 		time.Sleep(5 * time.Second)
 		for _, command := range commands {
+			if isDone {
+				// some think wrong
+				break
+			}
 			fmt.Println("command = ", command)
 			time.Sleep(1 * time.Second)
 			w.WriteString(command)
 		}
 	}()
-
-	var isDone bool
 
 	go func() {
 		// run radio
