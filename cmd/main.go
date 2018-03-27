@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	radio "github.com/Konstantin8105/Xi-radio"
+	radio "github.com/Konstantin8105/radio"
 )
 
 func main() {

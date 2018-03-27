@@ -3,6 +3,7 @@ package radio
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"math/rand"
 	"os"
 	"sort"
@@ -69,6 +70,10 @@ func showWithMaxLength(str string, length int) string {
 
 // Run radio
 func Run() (err error) {
+	return run(os.Stdin)
+}
+
+func run(stdin io.Reader) (err error) {
 	// show header of Xi-radio
 	fmt.Println("Start : Ξ (Xi-radio)")
 	fmt.Println("Enter 'help' for show all commands")
@@ -196,7 +201,7 @@ func Run() (err error) {
 
 	ui.register("resume", "Continue playing stopped stream",
 		func(args []string) (isExit bool, err error) {
-			err = vlc.CommandToVLC("stop\n")
+			err = vlc.CommandToVLC("resume\n")
 			return
 		})
 
@@ -211,11 +216,15 @@ func Run() (err error) {
 
 	// TODO: run last used station
 
+	reader := bufio.NewReader(stdin)
 	for {
 		fmt.Printf("Ξ> ")
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		cmd := strings.Split(strings.TrimSpace(scanner.Text()), " ")
+		text, err := reader.ReadString('\n')
+		if err != nil && err != io.EOF {
+			fmt.Println("err = ", err)
+			break
+		}
+		cmd := strings.Split(strings.TrimSpace(text), " ")
 
 		// remove empty cmd elements
 	checkAgain:

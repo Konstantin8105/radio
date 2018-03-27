@@ -1,5 +1,12 @@
 # Xi-radio
 
+[![Coverage Status](https://coveralls.io/repos/github/Konstantin8105/radio/badge.svg?branch=master)](https://coveralls.io/github/Konstantin8105/radio?branch=master)
+[![Build Status](https://travis-ci.org/Konstantin8105/radio.svg?branch=master)](https://travis-ci.org/Konstantin8105/radio)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Konstantin8105/radio)](https://goreportcard.com/report/github.com/Konstantin8105/radio)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Konstantin8105/radio/blob/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/Konstantin8105/radio?status.svg)](https://godoc.org/github.com/Konstantin8105/radio)
+
+
 Xi-radio is terminal radio
 
 ![logo](https://github.com/Konstantin8105/Xi-radio/blob/master/pic/logo.svg.png)
@@ -16,7 +23,7 @@ Xi is greek letter(see https://en.wikipedia.org/wiki/Xi_(letter))
 
 1. Commands to get source:
 ```
-go get -u github.com/Konstantin8105/Xi-radio
+go get -u github.com/Konstantin8105/radio
 ```
 2. Run:
 ```
