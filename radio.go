@@ -68,7 +68,7 @@ func showWithMaxLength(str string, length int) string {
 	return str[:length]
 }
 
-// Run radio
+// Run radio with terminal user interface
 func Run() (err error) {
 	return run(os.Stdin)
 }
