@@ -26,6 +26,7 @@ func NewVLC() (v *VLC, err error) {
 	var freePort int
 	freePort, err = freeport.Get()
 	if err != nil {
+		err = fmt.Errorf("Cannot found port. %v", err)
 		return
 	}
 
@@ -93,12 +94,14 @@ func (v *VLC) Close() (err error) {
 	// shutdown VLC server
 	err = v.CommandToVLC("shutdown\n")
 	if err != nil {
+		err = fmt.Errorf("Cannot shutdown VLC. %v", err)
 		return
 	}
 
 	// close connection
 	err = v.connection.Close()
 	if err != nil {
+		err = fmt.Errorf("Cannot close connection. %v", err)
 		return
 	}
 	return nil

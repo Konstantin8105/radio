@@ -78,10 +78,20 @@ func run(stdin io.Reader) (err error) {
 	fmt.Println("Start : Ξ (Xi-radio)")
 	fmt.Println("Enter 'help' for show all commands")
 
+	// search stations
+	stations, err := getStations()
+	if err != nil {
+		err = fmt.Errorf("Cannot get stations. %v", err)
+		return
+	}
+
+	fmt.Printf("Found : %d stations\n", len(stations))
+
 	// run VLC like a media server
 	var vlc *VLC
 	vlc, err = NewVLC()
 	if err != nil {
+		err = fmt.Errorf("Cannot run VLC. %v", err)
 		return
 	}
 	defer func() {
@@ -92,12 +102,6 @@ func run(stdin io.Reader) (err error) {
 			err = fmt.Errorf("%v. %v", err, errClose)
 		}
 	}()
-
-	// search stations
-	stations, err := getStations()
-	if err != nil {
-		return
-	}
 
 	// add seef for random number
 	rand.Seed(time.Now().UTC().UnixNano())

@@ -59,17 +59,22 @@ func getStations() (stations []station, err error) {
 			err = fmt.Errorf("Cannot read json. %v", err)
 			return
 		}
-		defer res.Body.Close()
+		defer func() {
+			res.Body.Close()
+		}()
 
-		_ = ioutil.WriteFile(stationListFilename, jsonList, 0644)
+		err = ioutil.WriteFile(stationListFilename, jsonList, 0644)
+		if err != nil {
+			err = fmt.Errorf("Cannot write to file. %v", err)
+			return
+		}
 	}
 
 	err = json.Unmarshal(jsonList, &stations)
 	if err != nil {
+		err = fmt.Errorf("Cannot Unmarshal json. %v", err)
 		return
 	}
-
-	fmt.Printf("Found : %d stations\n", len(stations))
 
 	return
 }
