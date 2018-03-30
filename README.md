@@ -27,7 +27,7 @@ go get -u github.com/Konstantin8105/radio
 ```
 2. Run:
 ```
-go run ./cmd/main.go
+go run main.go
 ```
 
 ## Commands of terminal radio
